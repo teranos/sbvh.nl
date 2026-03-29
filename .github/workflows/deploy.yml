@@ -23,11 +23,11 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
 
-      - run: nix build
+      - run: nix develop --command bash -c "bun install && bun run build.ts"
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: result
+          path: dist
 
   deploy:
     needs: build
