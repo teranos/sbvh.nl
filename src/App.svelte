@@ -15,6 +15,13 @@
 
 		<h1>Sebastiaan Brandon van Houten</h1>
 
+		<p class="intro">Systems engineer. Background in SRE and ML infrastructure. Now working on local inference, AI interpretability, visual programming languages, and verifiable knowledge systems.</p>
+
+		<p class="primitives">
+			<span class="primitive"><strong>Attestation</strong> — a structured claim: <span class="ats">as</span> [subject] <span class="ats">is</span> [predicate] <span class="ats">of</span> [context] <span class="ats">by</span> [actor] <span class="ats">at</span> [time]</span>
+			<span class="primitive"><strong>Glyph</strong> — a single DOM element that morphs between visual states for its entire lifetime</span>
+		</p>
+
 		<p class="label">Currently building:</p>
 
 		<div class="projects">
@@ -22,6 +29,7 @@
 			<a href="https://github.com/teranos/graunde" target="_blank" rel="noopener noreferrer">Graunde</a>
 			<a href="https://github.com/teranos/QNTX" target="_blank" rel="noopener noreferrer">Loom</a>
 			<a href="https://github.com/teranos/QNTX" target="_blank" rel="noopener noreferrer">Live Inference 3D Shader Viz</a>
+			<a href="https://github.com/teranos/QNTX" target="_blank" rel="noopener noreferrer">Glyphs</a>
 		</div>
 
 		<p class="label">Previously at</p>
@@ -111,6 +119,38 @@
 		letter-spacing: 0.02em;
 		text-align: center;
 		color: var(--text);
+	}
+
+	.intro {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--text-secondary);
+		text-align: center;
+		max-width: 480px;
+		line-height: 1.6;
+	}
+
+	.primitives {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		max-width: 520px;
+		text-align: center;
+	}
+
+	.primitive {
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--text-secondary);
+		line-height: 1.6;
+	}
+
+	.primitive strong {
+		color: var(--text);
+	}
+
+	.ats {
+		color: var(--accent);
 	}
 
 	.label {
