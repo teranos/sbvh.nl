@@ -15,7 +15,7 @@
 
 		<h1>Sebastiaan Brandon van Houten</h1>
 
-		<p class="intro">Systems engineer. Background in SRE and ML infrastructure. Now working on local inference, AI interpretability, and visual programming languages.</p>
+		<p class="intro">Systems engineer. Background in SRE and ML infrastructure. Now working on local inference, AI interpretability, visual programming languages, and genomic emancipation.</p>
 
 		<div class="primitives">
 			<span class="primitive attestation-hover">
