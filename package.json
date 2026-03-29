@@ -1,0 +1,12 @@
+{
+  "name": "sbvh.nl",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run dev-server.ts",
+    "build": "bun run build.ts"
+  },
+  "dependencies": {
+    "svelte": "5.55.0"
+  }
+}

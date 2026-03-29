@@ -1,0 +1,63 @@
+:root {
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Fira Code', 'Consolas', monospace;
+  --font-size-xs: 10px;
+  --font-size-sm: 11px;
+  --font-size-md: 13px;
+  --font-size-lg: 14px;
+
+  --gap: 7px;
+  --border-radius: 3px;
+  --border-radius-lg: 7px;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Light mode */
+  --text: #333433;
+  --text-secondary: #656766;
+  --text-tertiary: #989a99;
+  --bg: #fcffff;
+  --bg-secondary: #f7f9f8;
+  --border: #dcdedd;
+  --accent: #3d7a4d;
+  --accent-hover: #2d6a3d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #b0b2b1;
+    --text-secondary: #8a8c8b;
+    --text-tertiary: #6a6c6b;
+    --bg: #1a1b1a;
+    --bg-secondary: #252625;
+    --border: #3f4140;
+    --accent: #6a9a76;
+    --accent-hover: #82b08c;
+  }
+}
+
+/* Manual toggle: light user clicks logo -> dark, dark user clicks -> light */
+@media (prefers-color-scheme: light) {
+  :root.inverted {
+    --text: #b0b2b1;
+    --text-secondary: #8a8c8b;
+    --text-tertiary: #6a6c6b;
+    --bg: #1a1b1a;
+    --bg-secondary: #252625;
+    --border: #3f4140;
+    --accent: #6a9a76;
+    --accent-hover: #82b08c;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root.inverted {
+    --text: #333433;
+    --text-secondary: #656766;
+    --text-tertiary: #989a99;
+    --bg: #fcffff;
+    --bg-secondary: #f7f9f8;
+    --border: #dcdedd;
+    --accent: #3d7a4d;
+    --accent-hover: #2d6a3d;
+  }
+}
