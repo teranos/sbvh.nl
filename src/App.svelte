@@ -17,10 +17,18 @@
 
 		<p class="intro">Systems engineer. Background in SRE and ML infrastructure. Now working on local inference, AI interpretability, and visual programming languages.</p>
 
-		<p class="primitives">
-			<span class="primitive"><strong>Attestation</strong> — a structured claim: <span class="ats">as</span> [subject] <span class="ats">is</span> [predicate] <span class="ats">of</span> [context] <span class="ats">by</span> [actor] <span class="ats">at</span> [time] {'{}' }</span>
-			<span class="primitive"><strong>Glyph</strong> — a single DOM element that morphs between visual states for its entire lifetime</span>
-		</p>
+		<div class="primitives">
+			<span class="primitive attestation-hover">
+				<strong>Attestation</strong> — a structured claim
+				<pre class="ats-tooltip"><span class="ats">+ as</span>  [subject]
+<span class="ats">= is</span>  [predicate]
+<span class="ats">∈ of</span>  [context]
+<span class="ats">⊢ by</span>  [actor]
+<span class="ats">✦ at</span>  [time]
+      {'{}' }</pre>
+			</span>
+			<p class="primitive"><strong>Glyph</strong> — a single DOM element that morphs between visual states for its entire lifetime</p>
+		</div>
 
 		<div class="projects">
 			<a href="https://github.com/teranos/QNTX" target="_blank" rel="noopener noreferrer">QNTX</a>
@@ -149,6 +157,34 @@
 
 	.primitive strong {
 		color: var(--text);
+	}
+
+	.attestation-hover {
+		position: relative;
+		cursor: default;
+	}
+
+	.ats-tooltip {
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		margin-top: 0.5rem;
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		color: var(--text-secondary);
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		border-radius: var(--border-radius);
+		padding: 0.75rem 1rem;
+		line-height: 1.6;
+		white-space: pre;
+		z-index: 10;
+	}
+
+	.attestation-hover:hover .ats-tooltip {
+		display: block;
 	}
 
 	.ats {
