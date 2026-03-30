@@ -1,4 +1,6 @@
 <script lang="ts">
+	import GlyphTray from './GlyphTray.svelte'
+
 	let inverted = $state(false)
 
 	function toggleTheme() {
@@ -28,14 +30,6 @@
       {'{}' }</pre>
 			</span>
 			<p class="primitive"><strong>Glyph</strong> — a single DOM element that morphs between visual states for its entire lifetime</p>
-		</div>
-
-		<div class="projects">
-			<a href="https://github.com/teranos/QNTX" target="_blank" rel="noopener noreferrer">QNTX</a>
-			<a href="https://github.com/teranos/graunde" target="_blank" rel="noopener noreferrer">Graunde</a>
-			<a href="https://github.com/teranos/QNTX" target="_blank" rel="noopener noreferrer">Loom</a>
-			<a href="https://github.com/teranos/QNTX" target="_blank" rel="noopener noreferrer">Live Inference 3D Shader Viz</a>
-			<a href="https://github.com/teranos/QNTX" target="_blank" rel="noopener noreferrer">Glyphs</a>
 		</div>
 
 		<p class="label">Previously at</p>
@@ -74,6 +68,8 @@
 		</a>
 	</nav>
 </main>
+
+<GlyphTray />
 
 <style>
 	main {
