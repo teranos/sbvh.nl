@@ -1,73 +1,205 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { GlyphProximity } from '@qntx/glyphs/proximity'
+	import { glyphRun } from '@qntx/glyphs/run'
 	import type { Glyph } from '@qntx/glyphs/glyph'
 
-	const projects: (Glyph & { url: string })[] = [
-		{ id: 'qntx', title: 'QNTX', url: 'https://github.com/teranos/QNTX', renderContent: () => document.createElement('div') },
-		{ id: 'graunde', title: 'Graunde', url: 'https://github.com/teranos/graunde', renderContent: () => document.createElement('div') },
-		{ id: 'loom', title: 'Loom', url: 'https://github.com/teranos/QNTX', renderContent: () => document.createElement('div') },
-		{ id: 'shader', title: 'Live Inference 3D Shader Viz', url: 'https://github.com/teranos/QNTX', renderContent: () => document.createElement('div') },
-		{ id: 'glyphs', title: 'Glyphs', url: 'https://github.com/teranos/QNTX', renderContent: () => document.createElement('div') },
+	// Resolve CSS variable values at runtime for glyph color ownership
+	function cssVar(name: string): string {
+		return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+	}
+
+	function project(id: string, title: string, url: string, subtitle: string, description: string): Glyph & { url: string } {
+		return {
+			id, title, url,
+			initialWidth: '320px',
+			initialHeight: '140px',
+			color: cssVar('--bg-secondary'),
+			textColor: cssVar('--text'),
+			renderContent: () => projectContent(subtitle, description, url),
+		}
+	}
+
+	const projects = [
+		project('qntx', 'QNTX', 'https://github.com/teranos/QNTX', 'Continuous Intelligence', 'Domain-agnostic knowledge system built on verifiable attestations, visual programming, and local inference.'),
+		project('graunde', 'Graunde', 'https://github.com/teranos/graunde', 'Event Processing', 'Hook-based event processing for CLI tools.'),
+		project('loom', 'Loom', 'https://github.com/teranos/QNTX', 'Conversation Weaving', 'Svelte app for creating and browsing weaves of LLM/human turns.'),
+		project('shader', 'Shader Viz', 'https://github.com/teranos/QNTX', 'Live Inference', '3D shader visualization for local model inference.'),
+		project('glyphs', 'Glyphs', 'https://github.com/teranos/QNTX', 'UI Primitive', 'A single DOM element that morphs between visual states for its entire lifetime.'),
 	]
 
-	let container: HTMLElement
-	let proximity: GlyphProximity
-	let items: Map<string, Glyph> = new Map()
-	let raf: number | null = null
+	function projectContent(subtitle: string, description: string, url: string): HTMLElement {
+		const el = document.createElement('div')
+		el.className = 'glyph-content'
 
-	function loop() {
-		if (!container) return
-		proximity.updateProximity(container, items, false)
-		raf = requestAnimationFrame(loop)
+		const sub = document.createElement('div')
+		sub.style.cssText = 'font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;'
+		sub.textContent = subtitle
+		el.appendChild(sub)
+
+		const desc = document.createElement('div')
+		desc.style.cssText = 'font-size: 11px; color: var(--text-tertiary); line-height: 1.6; margin-bottom: 12px;'
+		desc.textContent = description
+		el.appendChild(desc)
+
+		const link = document.createElement('a')
+		link.href = url
+		link.target = '_blank'
+		link.rel = 'noopener noreferrer'
+		link.textContent = 'View on GitHub →'
+		link.style.cssText = 'font-size: 11px; color: var(--accent); text-decoration: none;'
+		el.appendChild(link)
+
+		return el
 	}
 
 	onMount(() => {
-		proximity = new GlyphProximity()
+		glyphRun.init()
 
-		// Create glyph elements — once and only once (DOM axiom)
 		for (const project of projects) {
-			items.set(project.id, project)
-
-			const el = document.createElement('div')
-			el.className = 'glyph-run-glyph'
-			el.setAttribute('data-glyph-id', project.id)
-			el.addEventListener('click', () => {
-				window.open(project.url, '_blank', 'noopener,noreferrer')
-			})
-			container.appendChild(el)
-		}
-
-		raf = requestAnimationFrame(loop)
-
-		return () => {
-			if (raf) cancelAnimationFrame(raf)
+			glyphRun.add(project)
 		}
 	})
 </script>
 
-<div bind:this={container} class="glyph-tray"></div>
-
 <style>
-	.glyph-tray {
+	/* Tray — fixed right edge, vertically centered */
+	:global(.glyph-run) {
 		position: fixed;
-		right: 0;
 		top: 50%;
+		right: 4px;
 		transform: translateY(-50%);
+		z-index: 1000;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
-		gap: 4px;
-		padding: 8px 6px;
-		z-index: 100;
+		pointer-events: none;
+		touch-action: none;
+		width: fit-content;
+		margin-left: auto;
 	}
 
-	.glyph-tray :global(.glyph-run-glyph) {
-		background-color: var(--text-tertiary) !important;
+	:global(.glyph-run[data-empty="true"]) {
+		pointer-events: none;
+	}
+
+	:global(.glyph-run-indicators) {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 2px;
+		width: fit-content;
+		height: fit-content;
+	}
+
+	@media (max-width: 768px) {
+		:global(.glyph-run-indicators) {
+			gap: 6px;
+		}
+	}
+
+	/* Dot base — pointer events on dots only */
+	:global(.glyph-run-glyph) {
+		pointer-events: auto;
 		cursor: pointer;
 		font-family: var(--font-mono);
 		font-size: var(--font-size-sm);
-		color: var(--bg);
 		overflow: hidden;
+	}
+
+	/* Morph transitions */
+	:global(.glyph-morphing-to-window) {
+		position: fixed !important;
+		z-index: 1001 !important;
+		pointer-events: auto;
+	}
+
+	:global(.window-morphing-to-glyph) {
+		position: fixed !important;
+		z-index: 1001 !important;
+		pointer-events: auto;
+	}
+
+	/* Window title bar */
+	:global(.glyph-title-bar) {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 0 8px;
+		background-color: var(--bg-secondary);
+		border-bottom: 1px solid var(--border);
+		border-radius: 4px 4px 0 0;
+		height: 32px;
+		width: 100%;
+		flex-shrink: 0;
+		user-select: none;
+		cursor: move;
+		font-size: var(--font-size-sm);
+		font-weight: 500;
+		color: var(--text);
+	}
+
+	/* Window control buttons */
+	:global(.glyph-title-bar button) {
+		width: 22px;
+		height: 22px;
+		padding: 1px 2px;
+		font-size: 13px;
+		background: var(--bg);
+		color: var(--text-secondary);
+		border: 1px solid var(--border);
+		border-radius: var(--border-radius);
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		line-height: 1;
+		margin-left: 2px;
+		transition: background 0.15s ease;
+	}
+
+	:global(.glyph-title-bar button:hover) {
+		background: var(--border);
+		color: var(--text);
+	}
+
+	@media (pointer: coarse) {
+		:global(.glyph-title-bar) {
+			height: 44px;
+		}
+		:global(.glyph-title-bar button) {
+			width: 44px;
+			height: 44px;
+			font-size: 17px;
+		}
+	}
+
+	/* Window surface — border for contrast */
+	:global(.glyph-run-glyph[data-window-state="true"]) {
+		border: 1px solid var(--border);
+	}
+
+	/* Window content */
+	:global(.glyph-content-area) {
+		flex: 1;
+		overflow: auto;
+		padding: 8px;
+	}
+
+	:global(.glyph-content) {
+		padding: 4px;
+		font-family: var(--font-mono);
+		font-size: var(--font-size-sm);
+		line-height: 1.4;
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		:global(.glyph-run-indicators),
+		:global(.glyph-morphing-to-window),
+		:global(.window-morphing-to-glyph),
+		:global(.glyph-run-glyph) {
+			transition-duration: 0s !important;
+			animation-duration: 0s !important;
+		}
 	}
 </style>
