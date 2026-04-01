@@ -7,7 +7,7 @@
     "build": "bun run build.ts"
   },
   "dependencies": {
-    "@qntx/glyphs": "file:../teranos/tmp3/QNTX/packages/glyphs",
+    "@qntx/glyphs": "npm:@jsr/qntx__glyphs",
     "svelte": "5.55.0"
   }
 }

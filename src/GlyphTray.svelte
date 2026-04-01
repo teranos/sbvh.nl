@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { glyphRun } from '@qntx/glyphs/run'
-	import type { Glyph } from '@qntx/glyphs/glyph'
+	import { glyphRun } from '@qntx/glyphs'
+	import type { Glyph } from '@qntx/glyphs'
 
 	// Resolve CSS variable values at runtime for glyph color ownership
 	function cssVar(name: string): string {
@@ -20,11 +20,11 @@
 	}
 
 	const projects = [
-		project('qntx', 'QNTX', 'https://github.com/teranos/QNTX', 'Continuous Intelligence', 'Domain-agnostic knowledge system built on verifiable attestations, visual programming, and local inference.'),
-		project('graunde', 'Graunde', 'https://github.com/teranos/graunde', 'Event Processing', 'Hook-based event processing for CLI tools.'),
-		project('loom', 'Loom', 'https://github.com/teranos/QNTX', 'Conversation Weaving', 'Svelte app for creating and browsing weaves of LLM/human turns.'),
+		project('qntx', 'QNTX', 'https://github.com/teranos/QNTX', 'Experience Learning', 'Turns complex, high-dimensional data into something you can see and reason about.'),
+		project('ground-control', 'Ground-Control', 'https://github.com/teranos/ground', 'Mission Control for AI', 'Grounds coding assistants to not drift off too much.'),
+		project('loom', 'Loom', 'https://github.com/teranos/QNTX', 'Conversation Weaving', 'Browse what you and your coding assistant actually did — every prompt, response, and action, woven together.'),
 		project('shader', 'Shader Viz', 'https://github.com/teranos/QNTX', 'Live Inference', '3D shader visualization for local model inference.'),
-		project('glyphs', 'Glyphs', 'https://github.com/teranos/QNTX', 'UI Primitive', 'A single DOM element that morphs between visual states for its entire lifetime.'),
+		project('glyphs', 'Glyphs', 'https://jsr.io/@qntx/glyphs', 'UI Primitive', 'An interface element with a permanent identity that smoothly changes form. This window is one.'),
 	]
 
 	function projectContent(subtitle: string, description: string, url: string): HTMLElement {

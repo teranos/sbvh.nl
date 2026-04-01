@@ -5,7 +5,7 @@
     "": {
       "name": "sbvh.nl",
       "dependencies": {
-        "@qntx/glyphs": "file:../teranos/tmp3/QNTX/packages/glyphs",
+        "@qntx/glyphs": "npm:@jsr/qntx__glyphs",
         "svelte": "5.55.0",
       },
     },
@@ -21,7 +21,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@qntx/glyphs": ["@qntx/glyphs@file:../teranos/tmp3/QNTX/packages/glyphs", {}],
+    "@qntx/glyphs": ["@jsr/qntx__glyphs@0.1.0", "https://npm.jsr.io/~/11/@jsr/qntx__glyphs/0.1.0.tgz", {}, "sha512-d1ZadYz5hBK2FT52UvuUpHLP2notiki2mCmoV1gKVvxq8tMQszVLfk5wJ1EJpgfqnFJRSyzhlfYceB2AFNqb5A=="],
 
     "@sveltejs/acorn-typescript": ["@sveltejs/acorn-typescript@1.0.9", "", { "peerDependencies": { "acorn": "^8.9.0" } }, "sha512-lVJX6qEgs/4DOcRTpo56tmKzVPtoWAaVbL4hfO7t7NVwl9AAXzQR6cihesW1BmNMPl+bK6dreu2sOKBP2Q9CIA=="],
 

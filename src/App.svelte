@@ -17,7 +17,7 @@
 
 		<h1>Sebastiaan Brandon van Houten</h1>
 
-		<p class="intro">Systems engineer. Background in SRE and ML infrastructure. Now working on local inference, AI interpretability, visual programming languages, and genomic emancipation.</p>
+		<p class="intro">Systems engineer. Background in infrastructure at scale. Now working on AI that runs on your own machine, visual programming languages, and genomic emancipation.</p>
 
 		<div class="primitives">
 			<span class="primitive attestation-hover">
@@ -29,7 +29,6 @@
 <span class="ats">✦ at</span>  [time]
       {'{}' }</pre>
 			</span>
-			<p class="primitive"><strong>Glyph</strong> — a single DOM element that morphs between visual states for its entire lifetime</p>
 		</div>
 
 		<p class="label">Previously at</p>
@@ -194,26 +193,7 @@
 		color: var(--text-secondary);
 	}
 
-	.projects {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 0.5rem 1.5rem;
-		max-width: 380px;
-	}
-
-	.projects a {
-		font-size: var(--font-size-lg);
-		color: var(--accent);
-		text-decoration: none;
-		transition: color 0.2s ease;
-	}
-
-	.projects a:hover {
-		color: var(--accent-hover);
-	}
-
-	.companies {
+.companies {
 		display: flex;
 		gap: 1rem;
 	}
