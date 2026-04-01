@@ -92,6 +92,9 @@
 	}
 
 	@media (max-width: 768px) {
+		:global(.glyph-run) {
+			top: 60%;
+		}
 		:global(.glyph-run-indicators) {
 			gap: 6px;
 		}
@@ -104,6 +107,8 @@
 		font-family: var(--font-mono);
 		font-size: var(--font-size-sm);
 		overflow: hidden;
+		border: 1px solid var(--border);
+		border-radius: 3px;
 	}
 
 	/* Morph transitions */
@@ -171,6 +176,12 @@
 			height: 44px;
 			font-size: 17px;
 		}
+	}
+
+	/* Hover/touch-hold feedback — brighter while pointing */
+	:global(.glyph-run-glyph:hover),
+	:global(.glyph-run-glyph:active) {
+		filter: brightness(1.3);
 	}
 
 	/* Window surface — border for contrast */
