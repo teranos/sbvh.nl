@@ -7,6 +7,73 @@
 		inverted = !inverted
 		document.documentElement.classList.toggle('inverted', inverted)
 	}
+
+	interface Candidate { text: string; prob: number }
+	interface LogitSpan { candidates: Candidate[]; selected: number }
+
+	const spans: Record<string, LogitSpan> = $state({
+		role:    { selected: 0, candidates: [
+			{ text: 'Systems engineer', prob: 0.40 },
+			{ text: 'Systems architect', prob: 0.25 },
+			{ text: 'Full stack', prob: 0.15 },
+			{ text: 'DevOps', prob: 0.12 },
+			{ text: 'SRE', prob: 0.08 },
+		]},
+		infra:   { selected: 0, candidates: [
+			{ text: 'at scale', prob: 0.60 },
+			{ text: 'as code', prob: 0.40 },
+		]},
+		ai:      { selected: 0, candidates: [
+			{ text: 'AI that runs on your own machine', prob: 0.55 },
+			{ text: 'local AI', prob: 0.45 },
+		]},
+		genomic: { selected: 0, candidates: [
+			{ text: 'genomic emancipation', prob: 0.45 },
+			{ text: 'genomic sovereignty', prob: 0.35 },
+			{ text: 'personal genomics', prob: 0.20 },
+		]},
+	})
+
+	let popup = $state<{ key: string; x: number; y: number } | null>(null)
+	let popupEl: HTMLDivElement | undefined = $state()
+	let hideTimer: ReturnType<typeof setTimeout> | null = null
+
+	function showPopup(key: string, e: MouseEvent) {
+		if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+		popup = { key, x: rect.left, y: rect.bottom + 4 }
+	}
+
+	function scheduleHide() {
+		if (hideTimer) clearTimeout(hideTimer)
+		hideTimer = setTimeout(() => { popup = null }, 150)
+	}
+
+	function cancelHide() {
+		if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+	}
+
+	function select(key: string, index: number) {
+		spans[key].selected = index
+		popup = null
+	}
+
+	function text(key: string): string {
+		const s = spans[key]
+		return s.candidates[s.selected].text
+	}
+
+	$effect(() => {
+		if (popup && popupEl) {
+			const rect = popupEl.getBoundingClientRect()
+			if (rect.right > window.innerWidth - 4) {
+				popup.x = window.innerWidth - rect.width - 4
+			}
+			if (rect.bottom > window.innerHeight - 4) {
+				popup.y = popup.y - rect.height - 30
+			}
+		}
+	})
 </script>
 
 <main>
@@ -17,19 +84,7 @@
 
 		<h1>Sebastiaan Brandon van Houten</h1>
 
-		<p class="intro">Systems engineer. Background in infrastructure at scale. Now working on AI that runs on your own machine, visual programming languages, and genomic emancipation.</p>
-
-		<div class="primitives">
-			<span class="primitive attestation-hover">
-				<strong>Attestation</strong> — a structured claim
-				<pre class="ats-tooltip"><span class="ats">+ as</span>  [subject]
-<span class="ats">= is</span>  [predicate]
-<span class="ats">∈ of</span>  [context]
-<span class="ats">⊢ by</span>  [actor]
-<span class="ats">✦ at</span>  [time]
-      {'{}' }</pre>
-			</span>
-		</div>
+		<p class="intro"><!-- eslint-disable-next-line --><span class="logit-span" onmouseenter={(e) => showPopup('role', e)} onmouseleave={scheduleHide}>{text('role')}</span>. Background in infrastructure <span class="logit-span" onmouseenter={(e) => showPopup('infra', e)} onmouseleave={scheduleHide}>{text('infra')}</span>. Now working on <span class="logit-span" onmouseenter={(e) => showPopup('ai', e)} onmouseleave={scheduleHide}>{text('ai')}</span>, visual programming languages, and <span class="logit-span" onmouseenter={(e) => showPopup('genomic', e)} onmouseleave={scheduleHide}>{text('genomic')}</span>.</p>
 
 		<p class="label">Previously at</p>
 
@@ -45,6 +100,30 @@
 			</a>
 		</div>
 	</div>
+
+	{#if popup}
+		<div
+			class="token-popup"
+			bind:this={popupEl}
+			style="left: {popup.x}px; top: {popup.y}px;"
+			onmouseenter={cancelHide}
+			onmouseleave={scheduleHide}
+		>
+			{#each spans[popup.key].candidates as candidate, i}
+				<button
+					class="token-popup-candidate"
+					class:token-popup-chosen={spans[popup.key].selected === i}
+					onclick={() => select(popup!.key, i)}
+				>
+					<span class="token-popup-token-text">{candidate.text}</span>
+					<div class="token-popup-bar-track">
+						<div class="token-popup-bar" style="width: {candidate.prob * 100}%"></div>
+					</div>
+					<span class="token-popup-prob">{(candidate.prob * 100).toFixed(0)}%</span>
+				</button>
+			{/each}
+		</div>
+	{/if}
 
 	<nav class="social">
 		<a href="/calendly" aria-label="Schedule a time" title="Schedule a time">
@@ -135,55 +214,84 @@
 		line-height: 1.6;
 	}
 
-	.primitives {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		max-width: 520px;
-		text-align: center;
+	.logit-span {
+		color: var(--text);
+		cursor: pointer;
+		transition: outline-color 0.15s ease;
+		outline: 1px solid transparent;
 	}
 
-	.primitive {
+	.logit-span:hover {
+		outline: 1px solid rgba(255, 220, 100, 0.35);
+	}
+
+	.token-popup {
+		position: fixed;
+		z-index: 100000;
+		background: var(--bg-secondary);
+		border: 1px solid var(--border);
+		padding: 6px 8px;
 		font-family: var(--font-mono);
 		font-size: var(--font-size-sm);
-		color: var(--text-secondary);
-		line-height: 1.6;
+		color: var(--text);
+		min-width: 180px;
+		max-width: 320px;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
 	}
 
-	.primitive strong {
+	.token-popup-candidate {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		height: 22px;
+		background: none;
+		border: none;
+		padding: 0 2px;
+		font-family: inherit;
+		font-size: inherit;
+		color: var(--text-tertiary);
+		cursor: pointer;
+		width: 100%;
+		text-align: left;
+	}
+
+	.token-popup-candidate:hover {
 		color: var(--text);
 	}
 
-	.attestation-hover {
+	.token-popup-chosen {
+		color: var(--text);
+	}
+
+	.token-popup-token-text {
+		flex: 1;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		font-size: 11px;
+	}
+
+	.token-popup-bar-track {
+		width: 60px;
+		height: 8px;
+		background: var(--border);
+		flex-shrink: 0;
 		position: relative;
-		cursor: default;
 	}
 
-	.ats-tooltip {
-		display: none;
-		position: absolute;
-		top: 100%;
-		left: 50%;
-		transform: translateX(-50%);
-		margin-top: 0.5rem;
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--text-secondary);
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		border-radius: var(--border-radius);
-		padding: 0.75rem 1rem;
-		line-height: 1.6;
-		white-space: pre;
-		z-index: 10;
+	.token-popup-bar {
+		height: 100%;
+		background: var(--accent);
 	}
 
-	.attestation-hover:hover .ats-tooltip {
-		display: block;
-	}
-
-	.ats {
-		color: var(--accent);
+	.token-popup-prob {
+		width: 28px;
+		text-align: right;
+		flex-shrink: 0;
+		font-size: 10px;
+		color: var(--text-tertiary);
 	}
 
 	.label {
@@ -248,6 +356,7 @@
 	@media (max-width: 480px) {
 		.logo img { width: 96px; height: 96px; }
 		h1 { font-size: 1.25rem; }
+		.intro { font-size: var(--font-size-md); }
 		.social { gap: 1.5rem; }
 	}
 </style>

@@ -10,27 +10,27 @@
 
 	const isMobile = window.matchMedia('(max-width: 768px)').matches
 
-	function project(id: string, title: string, url: string, subtitle: string, description: string): Glyph & { url: string } {
+	function project(id: string, title: string, url: string, subtitle: string, description: string, showAttestation = false): Glyph & { url: string } {
 		return {
 			id, title, url,
 			manifestationType: isMobile ? 'panel' : 'window',
 			initialWidth: '320px',
-			initialHeight: '140px',
+			initialHeight: showAttestation ? '260px' : '140px',
 			color: cssVar('--bg-secondary'),
 			textColor: cssVar('--text'),
-			renderContent: () => projectContent(subtitle, description, url),
+			renderContent: () => projectContent(subtitle, description, url, showAttestation),
 		}
 	}
 
 	const projects = [
-		project('qntx', 'QNTX', 'https://github.com/teranos/QNTX', 'Experience Learning', 'Turns complex, high-dimensional data into something you can see and reason about.'),
+		project('qntx', 'QNTX', 'https://github.com/teranos/QNTX', 'Experience Learning', 'Turns complex, high-dimensional data into something you can see and reason about.', true),
 		project('ground-control', 'Ground-Control', 'https://github.com/teranos/ground', 'Mission Control for AI', 'Grounds coding assistants to not drift off too much.'),
 		project('loom', 'Loom', 'https://github.com/teranos/QNTX', 'Conversation Weaving', 'Browse what you and your coding assistant actually did — every prompt, response, and action, woven together.'),
 		project('shader', 'Shader Viz', 'https://github.com/teranos/QNTX', 'Live Inference', '3D shader visualization for local model inference.'),
 		project('glyphs', 'Glyphs', 'https://jsr.io/@qntx/glyphs', 'UI Primitive', 'An interface element with a permanent identity that smoothly changes form. This window is one.'),
 	]
 
-	function projectContent(subtitle: string, description: string, url: string): HTMLElement {
+	function projectContent(subtitle: string, description: string, url: string, showAttestation = false): HTMLElement {
 		const el = document.createElement('div')
 		el.className = 'glyph-content'
 
@@ -43,6 +43,13 @@
 		desc.style.cssText = 'font-size: 11px; color: var(--text-tertiary); line-height: 1.6; margin-bottom: 12px;'
 		desc.textContent = description
 		el.appendChild(desc)
+
+		if (showAttestation) {
+			const ats = document.createElement('pre')
+			ats.style.cssText = 'font-size: 11px; color: var(--text-tertiary); line-height: 1.6; margin-bottom: 12px; white-space: pre;'
+			ats.innerHTML = `<span style="color: var(--text-secondary)">Attestation</span> — a structured claim\n<span style="color: var(--accent)">+ as</span>  [subject]\n<span style="color: var(--accent)">= is</span>  [predicate]\n<span style="color: var(--accent)">∈ of</span>  [context]\n<span style="color: var(--accent)">⊢ by</span>  [actor]\n<span style="color: var(--accent)">✦ at</span>  [time]\n      {}`
+			el.appendChild(ats)
+		}
 
 		const link = document.createElement('a')
 		link.href = url
