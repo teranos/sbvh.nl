@@ -3,11 +3,6 @@
 	import { glyphRun } from '@qntx/glyphs'
 	import type { Glyph } from '@qntx/glyphs'
 
-	// Resolve CSS variable values at runtime for glyph color ownership
-	function cssVar(name: string): string {
-		return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
-	}
-
 	const isMobile = window.matchMedia('(max-width: 768px)').matches
 
 	function project(id: string, title: string, url: string, subtitle: string, description: string, showAttestation = false): Glyph & { url: string } {
@@ -16,8 +11,8 @@
 			manifestationType: isMobile ? 'panel' : 'window',
 			initialWidth: '320px',
 			initialHeight: showAttestation ? '260px' : '140px',
-			color: cssVar('--bg-secondary'),
-			textColor: cssVar('--text'),
+			color: 'var(--bg-secondary)',
+			textColor: 'var(--text)',
 			renderContent: () => projectContent(subtitle, description, url, showAttestation),
 		}
 	}
