@@ -8,9 +8,12 @@
 		return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 	}
 
+	const isMobile = window.matchMedia('(max-width: 768px)').matches
+
 	function project(id: string, title: string, url: string, subtitle: string, description: string): Glyph & { url: string } {
 		return {
 			id, title, url,
+			manifestationType: isMobile ? 'panel' : 'window',
 			initialWidth: '320px',
 			initialHeight: '140px',
 			color: cssVar('--bg-secondary'),
@@ -94,6 +97,7 @@
 	@media (max-width: 768px) {
 		:global(.glyph-run) {
 			top: 60%;
+			z-index: 10004;
 		}
 		:global(.glyph-run-indicators) {
 			gap: 6px;
