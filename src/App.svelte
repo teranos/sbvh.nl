@@ -38,6 +38,14 @@
 	let popupEl: HTMLDivElement | undefined = $state()
 	let hideTimer: ReturnType<typeof setTimeout> | null = null
 
+	function togglePopup(key: string, e: MouseEvent) {
+		if (popup?.key === key) {
+			popup = null
+		} else {
+			showPopup(key, e)
+		}
+	}
+
 	function showPopup(key: string, e: MouseEvent) {
 		if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
 		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
@@ -84,7 +92,7 @@
 
 		<h1>Sebastiaan Brandon van Houten</h1>
 
-		<p class="intro"><!-- eslint-disable-next-line --><span class="logit-span" onmouseenter={(e) => showPopup('role', e)} onmouseleave={scheduleHide}>{text('role')}</span>. Background in infrastructure <span class="logit-span" onmouseenter={(e) => showPopup('infra', e)} onmouseleave={scheduleHide}>{text('infra')}</span>. Now working on <span class="logit-span" onmouseenter={(e) => showPopup('ai', e)} onmouseleave={scheduleHide}>{text('ai')}</span>, visual programming languages, and <span class="logit-span" onmouseenter={(e) => showPopup('genomic', e)} onmouseleave={scheduleHide}>{text('genomic')}</span>.</p>
+		<p class="intro"><!-- eslint-disable-next-line --><span class="logit-span" onmouseenter={(e) => showPopup('role', e)} onmouseleave={scheduleHide} onclick={(e) => togglePopup('role', e)}>{text('role')}</span>. Background in infrastructure <span class="logit-span" onmouseenter={(e) => showPopup('infra', e)} onmouseleave={scheduleHide} onclick={(e) => togglePopup('infra', e)}>{text('infra')}</span>. Now working on <span class="logit-span" onmouseenter={(e) => showPopup('ai', e)} onmouseleave={scheduleHide} onclick={(e) => togglePopup('ai', e)}>{text('ai')}</span>, visual programming languages, and <span class="logit-span" onmouseenter={(e) => showPopup('genomic', e)} onmouseleave={scheduleHide} onclick={(e) => togglePopup('genomic', e)}>{text('genomic')}</span>.</p>
 
 		<p class="label">Previously at</p>
 
