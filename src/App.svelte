@@ -8,45 +8,106 @@
 		document.documentElement.classList.toggle('inverted', inverted)
 	}
 
-	interface Candidate { text: string; prob: number }
-	interface LogitSpan { candidates: Candidate[]; selected: number }
+	// ── Beam tree ────────────────────────────────────────────────────────
+	// Each beam is a coherent path through the intro sentence.
+	// Selecting a slot filters downstream candidates to beams that match.
 
-	const spans: Record<string, LogitSpan> = $state({
-		role:    { selected: 0, candidates: [
-			{ text: 'Systems engineer', prob: 0.40 },
-			{ text: 'Systems architect', prob: 0.25 },
-			{ text: 'Full stack', prob: 0.15 },
-			{ text: 'DevOps', prob: 0.12 },
-			{ text: 'SRE', prob: 0.08 },
-		]},
-		infra:   { selected: 0, candidates: [
-			{ text: 'at scale', prob: 0.60 },
-			{ text: 'as code', prob: 0.40 },
-		]},
-		ai:      { selected: 0, candidates: [
-			{ text: 'AI that runs on your own machine', prob: 0.55 },
-			{ text: 'local AI', prob: 0.45 },
-		]},
-		genomic: { selected: 0, candidates: [
-			{ text: 'genomic emancipation', prob: 0.45 },
-			{ text: 'genomic sovereignty', prob: 0.35 },
-			{ text: 'personal genomics', prob: 0.20 },
-		]},
-	})
+	const slotKeys = ['role', 'domain', 'scope', 'verb', 'focus', 'craft', 'mission'] as const
+	type SlotKey = typeof slotKeys[number]
+	type Beam = Record<SlotKey, string> & { prob: number }
 
-	let popup = $state<{ key: string; x: number; y: number } | null>(null)
+	const beams: Beam[] = [
+		{ prob: 0.25, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'visual programming languages', mission: 'genomic emancipation' },
+		{ prob: 0.15, role: 'Systems architect', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'visual programming languages', mission: 'genomic sovereignty' },
+		{ prob: 0.15, role: 'SRE', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
+		{ prob: 0.12, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'automation', mission: 'secure health data' },
+		{ prob: 0.10, role: 'Full stack', domain: 'DevSecOps', scope: 'and data privacy', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
+		{ prob: 0.10, role: 'Founder', domain: 'genomic computing', scope: 'and open platforms', verb: 'Now working on', focus: 'data-sovereign bio-infrastructure', craft: 'secure health data', mission: 'genomic emancipation' },
+		{ prob: 0.08, role: 'Systems engineer', domain: 'ML infrastructure', scope: 'as code', verb: 'Now working on', focus: 'local inference', craft: 'visual programming languages', mission: 'genomic sovereignty' },
+		{ prob: 0.05, role: 'Systems architect', domain: 'infrastructure', scope: 'and resilience', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'genomic emancipation' },
+	]
+
+	// Sentence template — segments reference slot keys or static text
+	const template: ({ slot: SlotKey } | { text: string })[] = [
+		{ slot: 'role' },
+		{ text: '. Background in ' },
+		{ slot: 'domain' },
+		{ text: ' ' },
+		{ slot: 'scope' },
+		{ text: '. ' },
+		{ slot: 'verb' },
+		{ text: ' ' },
+		{ slot: 'focus' },
+		{ text: ', ' },
+		{ slot: 'craft' },
+		{ text: ', and ' },
+		{ slot: 'mission' },
+		{ text: '.' },
+	]
+
+	// ── Context seeding ──────────────────────────────────────────────────
+	function seedBeam(): Beam {
+		const params = new URLSearchParams(window.location.search)
+		const roleParam = params.get('role')
+		if (roleParam) {
+			const match = beams.find(b => b.role.toLowerCase() === roleParam.toLowerCase())
+			if (match) return match
+		}
+		const ref = document.referrer
+		if (ref.includes('genomicos')) return beams.find(b => b.role === 'Founder')!
+		if (ref.includes('github.com')) return beams.find(b => b.role === 'Systems engineer')!
+		return beams[0]
+	}
+
+	const seed = seedBeam()
+	let selected: Record<SlotKey, string> = $state(
+		Object.fromEntries(slotKeys.map(k => [k, seed[k]])) as Record<SlotKey, string>
+	)
+
+	// ── Beam filtering ───────────────────────────────────────────────────
+	// For a given slot, filter beams by all upstream selections,
+	// then return unique candidates with normalized probabilities.
+	function candidatesFor(key: SlotKey): { text: string; prob: number }[] {
+		const idx = slotKeys.indexOf(key)
+		let matching = beams
+		for (let i = 0; i < idx; i++) {
+			const up = slotKeys[i]
+			matching = matching.filter(b => b[up] === selected[up])
+		}
+		const groups: Record<string, number> = {}
+		for (const b of matching) {
+			groups[b[key]] = (groups[b[key]] || 0) + b.prob
+		}
+		const total = Object.values(groups).reduce((a, b) => a + b, 0)
+		return Object.entries(groups)
+			.map(([text, prob]) => ({ text, prob: total > 0 ? prob / total : 0 }))
+			.sort((a, b) => b.prob - a.prob)
+	}
+
+	// When a slot changes, cascade: snap downstream slots that are
+	// no longer reachable to the highest-probability option.
+	function selectSlot(key: SlotKey, value: string) {
+		selected[key] = value
+		const idx = slotKeys.indexOf(key)
+		for (let i = idx + 1; i < slotKeys.length; i++) {
+			const candidates = candidatesFor(slotKeys[i])
+			if (!candidates.some(c => c.text === selected[slotKeys[i]])) {
+				selected[slotKeys[i]] = candidates[0]?.text ?? ''
+			}
+		}
+		popup = null
+	}
+
+	// ── Popup ────────────────────────────────────────────────────────────
+	let popup = $state<{ key: SlotKey; x: number; y: number } | null>(null)
 	let popupEl: HTMLDivElement | undefined = $state()
 	let hideTimer: ReturnType<typeof setTimeout> | null = null
 
-	function togglePopup(key: string, e: MouseEvent) {
-		if (popup?.key === key) {
-			popup = null
-		} else {
-			showPopup(key, e)
-		}
+	function togglePopup(key: SlotKey, e: MouseEvent) {
+		if (popup?.key === key) { popup = null } else { showPopup(key, e) }
 	}
 
-	function showPopup(key: string, e: MouseEvent) {
+	function showPopup(key: SlotKey, e: MouseEvent) {
 		if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
 		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
 		popup = { key, x: rect.left, y: rect.bottom + 4 }
@@ -59,16 +120,6 @@
 
 	function cancelHide() {
 		if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
-	}
-
-	function select(key: string, index: number) {
-		spans[key].selected = index
-		popup = null
-	}
-
-	function text(key: string): string {
-		const s = spans[key]
-		return s.candidates[s.selected].text
 	}
 
 	$effect(() => {
@@ -92,7 +143,13 @@
 
 		<h1>Sebastiaan Brandon van Houten</h1>
 
-		<p class="intro"><!-- eslint-disable-next-line --><span class="logit-span" onmouseenter={(e) => showPopup('role', e)} onmouseleave={scheduleHide} onclick={(e) => togglePopup('role', e)}>{text('role')}</span>. Background in infrastructure <span class="logit-span" onmouseenter={(e) => showPopup('infra', e)} onmouseleave={scheduleHide} onclick={(e) => togglePopup('infra', e)}>{text('infra')}</span>. Now working on <span class="logit-span" onmouseenter={(e) => showPopup('ai', e)} onmouseleave={scheduleHide} onclick={(e) => togglePopup('ai', e)}>{text('ai')}</span>, visual programming languages, and <span class="logit-span" onmouseenter={(e) => showPopup('genomic', e)} onmouseleave={scheduleHide} onclick={(e) => togglePopup('genomic', e)}>{text('genomic')}</span>.</p>
+		<p class="intro">{#each template as seg}{'slot' in seg ? '' : ''}{#if 'slot' in seg}<span
+				class="logit-span"
+				class:logit-single={candidatesFor(seg.slot).length <= 1}
+				onmouseenter={(e) => showPopup(seg.slot, e)}
+				onmouseleave={scheduleHide}
+				onclick={(e) => togglePopup(seg.slot, e)}
+			>{selected[seg.slot]}</span>{:else}{seg.text}{/if}{/each}</p>
 
 		<p class="label">Previously at</p>
 
@@ -109,7 +166,7 @@
 		</div>
 	</div>
 
-	{#if popup}
+	{#if popup && candidatesFor(popup.key).length > 1}
 		<div
 			class="token-popup"
 			bind:this={popupEl}
@@ -117,11 +174,11 @@
 			onmouseenter={cancelHide}
 			onmouseleave={scheduleHide}
 		>
-			{#each spans[popup.key].candidates as candidate, i}
+			{#each candidatesFor(popup.key) as candidate}
 				<button
 					class="token-popup-candidate"
-					class:token-popup-chosen={spans[popup.key].selected === i}
-					onclick={() => select(popup!.key, i)}
+					class:token-popup-chosen={selected[popup.key] === candidate.text}
+					onclick={() => selectSlot(popup!.key, candidate.text)}
 				>
 					<span class="token-popup-token-text">{candidate.text}</span>
 					<div class="token-popup-bar-track">
@@ -231,6 +288,15 @@
 
 	.logit-span:hover {
 		outline: 1px solid rgba(255, 220, 100, 0.35);
+	}
+
+	.logit-single {
+		cursor: default;
+		color: var(--text-secondary);
+	}
+
+	.logit-single:hover {
+		outline-color: transparent;
 	}
 
 	.token-popup {
