@@ -1,5 +1,6 @@
 <script lang="ts">
 	import GlyphTray from './GlyphTray.svelte'
+	import BeamIntro from './BeamIntro.svelte'
 
 	let inverted = $state(false)
 
@@ -7,132 +8,6 @@
 		inverted = !inverted
 		document.documentElement.classList.toggle('inverted', inverted)
 	}
-
-	// ── Beam tree ────────────────────────────────────────────────────────
-	// Each beam is a coherent path through the intro sentence.
-	// Selecting a slot filters downstream candidates to beams that match.
-
-	const slotKeys = ['role', 'domain', 'scope', 'verb', 'focus', 'craft', 'mission'] as const
-	type SlotKey = typeof slotKeys[number]
-	type Beam = Record<SlotKey, string> & { prob: number }
-
-	const beams: Beam[] = [
-		{ prob: 0.25, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'visual programming languages', mission: 'genomic emancipation' },
-		{ prob: 0.15, role: 'Systems architect', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'visual programming languages', mission: 'genomic sovereignty' },
-		{ prob: 0.15, role: 'SRE', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
-		{ prob: 0.12, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'automation', mission: 'secure health data' },
-		{ prob: 0.10, role: 'Full stack', domain: 'DevSecOps', scope: 'and data privacy', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
-		{ prob: 0.10, role: 'Founder', domain: 'genomic computing', scope: 'and open platforms', verb: 'Now working on', focus: 'data-sovereign bio-infrastructure', craft: 'secure health data', mission: 'genomic emancipation' },
-		{ prob: 0.08, role: 'Systems engineer', domain: 'ML infrastructure', scope: 'as code', verb: 'Now working on', focus: 'local inference', craft: 'visual programming languages', mission: 'genomic sovereignty' },
-		{ prob: 0.05, role: 'Systems architect', domain: 'infrastructure', scope: 'and resilience', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'genomic emancipation' },
-	]
-
-	// Sentence template — segments reference slot keys or static text
-	const template: ({ slot: SlotKey } | { text: string })[] = [
-		{ slot: 'role' },
-		{ text: '. Background in ' },
-		{ slot: 'domain' },
-		{ text: ' ' },
-		{ slot: 'scope' },
-		{ text: '. ' },
-		{ slot: 'verb' },
-		{ text: ' ' },
-		{ slot: 'focus' },
-		{ text: ', ' },
-		{ slot: 'craft' },
-		{ text: ', and ' },
-		{ slot: 'mission' },
-		{ text: '.' },
-	]
-
-	// ── Context seeding ──────────────────────────────────────────────────
-	function seedBeam(): Beam {
-		const params = new URLSearchParams(window.location.search)
-		const roleParam = params.get('role')
-		if (roleParam) {
-			const match = beams.find(b => b.role.toLowerCase() === roleParam.toLowerCase())
-			if (match) return match
-		}
-		const ref = document.referrer
-		if (ref.includes('genomicos')) return beams.find(b => b.role === 'Founder')!
-		if (ref.includes('github.com')) return beams.find(b => b.role === 'Systems engineer')!
-		return beams[0]
-	}
-
-	const seed = seedBeam()
-	let selected: Record<SlotKey, string> = $state(
-		Object.fromEntries(slotKeys.map(k => [k, seed[k]])) as Record<SlotKey, string>
-	)
-
-	// ── Beam filtering ───────────────────────────────────────────────────
-	// For a given slot, filter beams by all upstream selections,
-	// then return unique candidates with normalized probabilities.
-	function candidatesFor(key: SlotKey): { text: string; prob: number }[] {
-		const idx = slotKeys.indexOf(key)
-		let matching = beams
-		for (let i = 0; i < idx; i++) {
-			const up = slotKeys[i]
-			matching = matching.filter(b => b[up] === selected[up])
-		}
-		const groups: Record<string, number> = {}
-		for (const b of matching) {
-			groups[b[key]] = (groups[b[key]] || 0) + b.prob
-		}
-		const total = Object.values(groups).reduce((a, b) => a + b, 0)
-		return Object.entries(groups)
-			.map(([text, prob]) => ({ text, prob: total > 0 ? prob / total : 0 }))
-			.sort((a, b) => b.prob - a.prob)
-	}
-
-	// When a slot changes, cascade: snap downstream slots that are
-	// no longer reachable to the highest-probability option.
-	function selectSlot(key: SlotKey, value: string) {
-		selected[key] = value
-		const idx = slotKeys.indexOf(key)
-		for (let i = idx + 1; i < slotKeys.length; i++) {
-			const candidates = candidatesFor(slotKeys[i])
-			if (!candidates.some(c => c.text === selected[slotKeys[i]])) {
-				selected[slotKeys[i]] = candidates[0]?.text ?? ''
-			}
-		}
-		popup = null
-	}
-
-	// ── Popup ────────────────────────────────────────────────────────────
-	let popup = $state<{ key: SlotKey; x: number; y: number } | null>(null)
-	let popupEl: HTMLDivElement | undefined = $state()
-	let hideTimer: ReturnType<typeof setTimeout> | null = null
-
-	function togglePopup(key: SlotKey, e: MouseEvent) {
-		if (popup?.key === key) { popup = null } else { showPopup(key, e) }
-	}
-
-	function showPopup(key: SlotKey, e: MouseEvent) {
-		if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
-		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-		popup = { key, x: rect.left, y: rect.bottom + 4 }
-	}
-
-	function scheduleHide() {
-		if (hideTimer) clearTimeout(hideTimer)
-		hideTimer = setTimeout(() => { popup = null }, 150)
-	}
-
-	function cancelHide() {
-		if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
-	}
-
-	$effect(() => {
-		if (popup && popupEl) {
-			const rect = popupEl.getBoundingClientRect()
-			if (rect.right > window.innerWidth - 4) {
-				popup.x = window.innerWidth - rect.width - 4
-			}
-			if (rect.bottom > window.innerHeight - 4) {
-				popup.y = popup.y - rect.height - 30
-			}
-		}
-	})
 </script>
 
 <main>
@@ -143,13 +18,7 @@
 
 		<h1>Sebastiaan Brandon van Houten</h1>
 
-		<p class="intro">{#each template as seg}{'slot' in seg ? '' : ''}{#if 'slot' in seg}<span
-				class="logit-span"
-				class:logit-single={candidatesFor(seg.slot).length <= 1}
-				onmouseenter={(e) => showPopup(seg.slot, e)}
-				onmouseleave={scheduleHide}
-				onclick={(e) => togglePopup(seg.slot, e)}
-			>{selected[seg.slot]}</span>{:else}{seg.text}{/if}{/each}</p>
+		<BeamIntro />
 
 		<p class="label">Previously at</p>
 
@@ -165,30 +34,6 @@
 			</a>
 		</div>
 	</div>
-
-	{#if popup && candidatesFor(popup.key).length > 1}
-		<div
-			class="token-popup"
-			bind:this={popupEl}
-			style="left: {popup.x}px; top: {popup.y}px;"
-			onmouseenter={cancelHide}
-			onmouseleave={scheduleHide}
-		>
-			{#each candidatesFor(popup.key) as candidate}
-				<button
-					class="token-popup-candidate"
-					class:token-popup-chosen={selected[popup.key] === candidate.text}
-					onclick={() => selectSlot(popup!.key, candidate.text)}
-				>
-					<span class="token-popup-token-text">{candidate.text}</span>
-					<div class="token-popup-bar-track">
-						<div class="token-popup-bar" style="width: {candidate.prob * 100}%"></div>
-					</div>
-					<span class="token-popup-prob">{(candidate.prob * 100).toFixed(0)}%</span>
-				</button>
-			{/each}
-		</div>
-	{/if}
 
 	<nav class="social">
 		<a href="/calendly" aria-label="Schedule a time" title="Schedule a time">
@@ -270,104 +115,6 @@
 		color: var(--text);
 	}
 
-	.intro {
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--text-secondary);
-		text-align: center;
-		max-width: 480px;
-		line-height: 1.6;
-	}
-
-	.logit-span {
-		color: var(--text);
-		cursor: pointer;
-		transition: outline-color 0.15s ease;
-		outline: 1px solid transparent;
-	}
-
-	.logit-span:hover {
-		outline: 1px solid rgba(255, 220, 100, 0.35);
-	}
-
-	.logit-single {
-		cursor: default;
-		color: var(--text-secondary);
-	}
-
-	.logit-single:hover {
-		outline-color: transparent;
-	}
-
-	.token-popup {
-		position: fixed;
-		z-index: 100000;
-		background: var(--bg-secondary);
-		border: 1px solid var(--border);
-		padding: 6px 8px;
-		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
-		color: var(--text);
-		min-width: 180px;
-		max-width: 320px;
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-	}
-
-	.token-popup-candidate {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		height: 22px;
-		background: none;
-		border: none;
-		padding: 0 2px;
-		font-family: inherit;
-		font-size: inherit;
-		color: var(--text-tertiary);
-		cursor: pointer;
-		width: 100%;
-		text-align: left;
-	}
-
-	.token-popup-candidate:hover {
-		color: var(--text);
-	}
-
-	.token-popup-chosen {
-		color: var(--text);
-	}
-
-	.token-popup-token-text {
-		flex: 1;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		font-size: 11px;
-	}
-
-	.token-popup-bar-track {
-		width: 60px;
-		height: 8px;
-		background: var(--border);
-		flex-shrink: 0;
-		position: relative;
-	}
-
-	.token-popup-bar {
-		height: 100%;
-		background: var(--accent);
-	}
-
-	.token-popup-prob {
-		width: 28px;
-		text-align: right;
-		flex-shrink: 0;
-		font-size: 10px;
-		color: var(--text-tertiary);
-	}
-
 	.label {
 		font-family: Georgia, 'Times New Roman', serif;
 		font-size: var(--font-size-md);
@@ -375,7 +122,7 @@
 		color: var(--text-secondary);
 	}
 
-.companies {
+	.companies {
 		display: flex;
 		gap: 1rem;
 	}
@@ -430,7 +177,6 @@
 	@media (max-width: 480px) {
 		.logo img { width: 96px; height: 96px; }
 		h1 { font-size: 1.25rem; }
-		.intro { font-size: var(--font-size-md); }
 		.social { gap: 1.5rem; }
 	}
 </style>
