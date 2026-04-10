@@ -18,6 +18,9 @@
 		{ prob: 0.05, role: 'Systems architect', domain: 'infrastructure', scope: 'and resilience', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
 		{ prob: 0.07, role: 'SRE', domain: 'MLOps', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'genomic sovereignty' },
 		{ prob: 0.05, role: 'Systems engineer', domain: 'MLOps', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
+		{ prob: 0.04, role: 'SRE', domain: 'infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'data-sovereign bio-infrastructure' },
+		{ prob: 0.04, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'CI/CD', mission: 'secure health data' },
+		{ prob: 0.03, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'genomic sovereignty' },
 	]
 
 	// Sentence template — segments reference slot keys or static text
