@@ -207,6 +207,8 @@
 		font-family: var(--font-mono);
 		font-size: var(--font-size-sm);
 		line-height: 1.4;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
 	}
 
 	/* Reduced motion */
