@@ -19,9 +19,10 @@
 
 	const projects = [
 		project('qntx', 'QNTX', 'https://github.com/teranos/QNTX', 'Experience Learning', 'Turns complex, high-dimensional data into something you can see and reason about.', true),
-		project('ground-control', 'Ground-Control', 'https://github.com/teranos/ground', 'Mission Control for AI', 'Grounds coding assistants to not drift off too much.'),
+		project('ground', 'Ground', 'https://github.com/teranos/ground', 'Mission Control for AI', 'Grounds coding assistants to not drift off too much.'),
 		project('loom', 'Loom', 'https://github.com/teranos/QNTX', 'Conversation Weaving', 'Browse what you and your coding assistant actually did — every prompt, response, and action, woven together.'),
-		project('shader', 'Shader Viz', 'https://github.com/teranos/QNTX', 'Live Inference', '3D shader visualization for local model inference.'),
+		project('scry', 'Scry', 'https://github.com/teranos/QNTX', 'Live Inference', '3D shader visualization for local model inference.'),
+		project('werf', 'Werf', 'https://github.com/teranos/QNTX', 'Job Matching', 'Your CV is the interface. Upload it, see where you could go next, and get matched to roles that fit your trajectory.'),
 		project('glyphs', 'Glyphs', 'https://jsr.io/@qntx/glyphs', 'UI Primitive', 'An interface element with a permanent identity that smoothly changes form. This window is one.'),
 	]
 
