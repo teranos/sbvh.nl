@@ -5,7 +5,7 @@
     "": {
       "name": "sbvh.nl",
       "dependencies": {
-        "@qntx/glyphs": "npm:@jsr/qntx__glyphs@0.4.0",
+        "@qntx/glyphs": "npm:@jsr/qntx__glyphs@0.5.0",
         "svelte": "5.55.0",
       },
     },
@@ -21,7 +21,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@qntx/glyphs": ["@jsr/qntx__glyphs@0.4.0", "https://npm.jsr.io/~/11/@jsr/qntx__glyphs/0.4.0.tgz", {}, "sha512-YjqAeYWO6GEm6qqz0pNGojqvWpYa53roRxA1AsmhG/kyaV4iltvl00GoODIZO7wC5Qdnqvou/Z/LfWWskYf0Lw=="],
+    "@qntx/glyphs": ["@jsr/qntx__glyphs@0.5.0", "https://npm.jsr.io/~/11/@jsr/qntx__glyphs/0.5.0.tgz", {}, "sha512-kHV0JKR18J/LCkt/O49AUbw95NThnY6NIFVbHzeEfeLBda3x6Pc7IZPfj3JIFs+M5I6J01Y660xcPo+aBAdTAg=="],
 
     "@sveltejs/acorn-typescript": ["@sveltejs/acorn-typescript@1.0.9", "", { "peerDependencies": { "acorn": "^8.9.0" } }, "sha512-lVJX6qEgs/4DOcRTpo56tmKzVPtoWAaVbL4hfO7t7NVwl9AAXzQR6cihesW1BmNMPl+bK6dreu2sOKBP2Q9CIA=="],
 
