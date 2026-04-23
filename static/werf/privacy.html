@@ -93,25 +93,22 @@
 
     <h2>What we collect</h2>
     <ul>
-      <li>CV documents you upload (PDF)</li>
-      <li>Structured text extracted from your CV</li>
-      <li>Motivation letters you create within the service</li>
-      <li>Basic usage data (timestamps, feature interactions)</li>
+      <li>Identity: Name and email address obtained through LinkedIn sign-in via AWS Cognito</li>
+      <li>CV data: PDF documents and structured text extracted from them</li>
+      <li>Device tokens: Push notification tokens, used solely to send you updates about your application status</li>
+      <li>Usage metrics: Timestamps and feature interactions</li>
     </ul>
 
-    <h2>How we process it</h2>
+    <h2>Data sharing</h2>
+    <p>Your data is processed by the following categories of third parties, each under data processing agreements:</p>
     <ul>
-      <li>PDF parsing happens on your device. The raw file is not sent to our servers.</li>
-      <li>Structured text extracted from your CV is sent to our servers for analysis.</li>
-      <li>Analysis is performed using third-party AI providers. Your data is sent to them for processing.</li>
-      <li>No recruiter sees your data without your explicit consent.</li>
+      <li>Identity provider: AWS Cognito (authentication) and LinkedIn (sign-in)</li>
+      <li>AI analysis provider: For structured CV parsing</li>
     </ul>
+    <p>Recruiters cannot access your information without your explicit permission.</p>
 
     <h2>Legal basis</h2>
     <p>We process your data based on your consent (GDPR Art. 6(1)(a)). You can withdraw consent at any time.</p>
-
-    <h2>Third parties</h2>
-    <p>We use third-party AI providers to analyse structured text from your CV. These providers process data on our behalf under data processing agreements.</p>
 
     <h2>Retention</h2>
     <p>Your data is retained for as long as you use the service. Upon account deletion or withdrawal of consent, your data is deleted within 30 days.</p>
