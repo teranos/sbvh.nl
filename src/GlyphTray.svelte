@@ -24,6 +24,9 @@
 		project('scry', 'Scry', 'https://github.com/teranos/QNTX', 'Live Inference', '3D shader visualization for local model inference.'),
 		project('werf', 'Werf', 'https://github.com/teranos/QNTX', 'Job Matching', 'Your CV is the interface. Upload it, see where you could go next, and get matched to roles that fit your trajectory.'),
 		project('glyphs', 'Glyphs', 'https://jsr.io/@qntx/glyphs', 'UI Primitive', 'An interface element with a permanent identity that smoothly changes form. This window is one.'),
+		project('cleanamsterdam', 'Clean Amsterdam', 'https://cleanamsterdam.nl', 'House Cleaning', 'Amsterdam house cleaning service.'),
+		project('laye', 'Laye', 'https://laye.sbvh.nl', 'TODO subtitle', 'TODO description'),
+		project('game', 'Game', 'https://game.sbvh.nl', 'TODO subtitle', 'TODO description (built on Laye)'),
 	]
 
 	function projectContent(subtitle: string, description: string, url: string, showAttestation = false): HTMLElement {

@@ -66,4 +66,36 @@ await cp(staticDir, outDir, { recursive: true })
 const html = await Bun.file(join(import.meta.dir, 'index.html')).text()
 await Bun.write(join(outDir, 'index.html'), html.replace('/src/main.ts', '/main.js'))
 
+// Sitemap with per-URL <lastmod> pulled from git.
+// Each entry lists every path whose change should bump that URL's lastmod;
+// we take the newest commit time across those paths. Untracked paths return
+// empty and drop out — the URL appears without <lastmod>.
+const sitemapBase = 'https://sbvh.nl'
+const sitemapPages: Array<{ loc: string; sources: string[] }> = [
+  { loc: '/',                  sources: ['index.html', 'src', 'tokens.css'] },
+  { loc: '/calendly/',         sources: ['static/calendly/index.html'] },
+  { loc: '/werf/privacy.html', sources: ['static/werf/privacy.html'] },
+]
+
+async function gitLastMod(paths: string[]): Promise<string> {
+  let latest = ''
+  for (const p of paths) {
+    const out = (await Bun.$`git log -1 --format=%aI -- ${p}`.cwd(import.meta.dir).text()).trim()
+    if (out && out > latest) latest = out
+  }
+  return latest
+}
+
+const urlBlocks: string[] = []
+for (const page of sitemapPages) {
+  const lastmod = await gitLastMod(page.sources)
+  const lastmodTag = lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''
+  urlBlocks.push(`  <url>\n    <loc>${sitemapBase}${page.loc}</loc>${lastmodTag}\n  </url>`)
+}
+
+await Bun.write(
+  join(outDir, 'sitemap.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlBlocks.join('\n')}\n</urlset>\n`,
+)
+
 console.log('sbvh.nl built -> dist/')
