@@ -7,20 +7,22 @@
 	type SlotKey = typeof slotKeys[number]
 	type Beam = Record<SlotKey, string> & { prob: number }
 
+	// Mass sits on infrastructure + resilience + operations: that is the first read.
+	// The AI and genomics paths stay reachable one click down every slot, not removed.
 	const beams: Beam[] = [
-		{ prob: 0.25, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'visual programming languages', mission: 'genomic sovereignty' },
-		{ prob: 0.15, role: 'Systems architect', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'visual programming languages', mission: 'genomic sovereignty' },
-		{ prob: 0.15, role: 'SRE', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
-		{ prob: 0.12, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'automation', mission: 'secure health data' },
-		{ prob: 0.10, role: 'Full stack', domain: 'DevSecOps', scope: 'and data privacy', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
-		{ prob: 0.10, role: 'Founder', domain: 'genomic computing', scope: 'and open platforms', verb: 'Now working on', focus: 'data-sovereign bio-infrastructure', craft: 'secure health data', mission: 'genomic emancipation' },
-		{ prob: 0.08, role: 'Systems engineer', domain: 'ML infrastructure', scope: 'at scale', verb: 'Now working on', focus: 'local inference', craft: 'visual programming languages', mission: 'genomic sovereignty' },
-		{ prob: 0.05, role: 'Systems architect', domain: 'infrastructure', scope: 'and resilience', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
-		{ prob: 0.07, role: 'SRE', domain: 'MLOps', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'genomic sovereignty' },
-		{ prob: 0.05, role: 'Systems engineer', domain: 'MLOps', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
-		{ prob: 0.04, role: 'SRE', domain: 'infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'data-sovereign bio-infrastructure' },
+		{ prob: 0.28, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
+		{ prob: 0.12, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'secure health data' },
+		{ prob: 0.10, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'visual programming languages', mission: 'genomic sovereignty' },
+		{ prob: 0.08, role: 'SRE', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
+		{ prob: 0.07, role: 'SRE', domain: 'infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'genomic sovereignty' },
+		{ prob: 0.06, role: 'Systems architect', domain: 'infrastructure', scope: 'and resilience', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
+		{ prob: 0.05, role: 'Systems engineer', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
+		{ prob: 0.05, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'automation', mission: 'secure health data' },
 		{ prob: 0.04, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'CI/CD', mission: 'secure health data' },
-		{ prob: 0.03, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'genomic sovereignty' },
+		{ prob: 0.04, role: 'Systems architect', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'visual programming languages', mission: 'genomic sovereignty' },
+		{ prob: 0.04, role: 'SRE', domain: 'MLOps', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'genomic sovereignty' },
+		{ prob: 0.04, role: 'Founder', domain: 'genomic computing', scope: 'and open platforms', verb: 'Now working on', focus: 'data-sovereign bio-infrastructure', craft: 'secure health data', mission: 'genomic emancipation' },
+		{ prob: 0.03, role: 'Full stack', domain: 'DevSecOps', scope: 'and data privacy', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
 	]
 
 	// Sentence template — segments reference slot keys or static text
@@ -117,14 +119,19 @@
 
 	// ── Contextual links: beam + city ────────────────────────────────────
 	const aiKeywords = ['AI that runs on your own machine', 'local AI', 'local inference', 'AI interpretability']
+	// Roles whose reader wants operations, not research — SREday outranks the AI meetups for them.
+	const infraRoles = ['SRE', 'Systems engineer', 'Systems architect', 'DevOps']
 	interface ContextLink { label: string; url: string }
 
 	let contextLinks = $derived.by((): ContextLink[] => {
 		const links: ContextLink[] = []
 		const isAi = aiKeywords.includes(selected.focus)
+		const isInfra = infraRoles.includes(selected.role)
+		if (isInfra)
+			links.push({ label: 'SREday →', url: 'https://sreday.com/' })
 		if (selected.domain === 'MLOps' && city === 'Amsterdam')
 			links.push({ label: 'Amsterdam MLOps →', url: 'https://luma.com/amsterdam-mlops' })
-		if (isAi && city === 'Amsterdam' && selected.domain !== 'MLOps')
+		if (!isInfra && isAi && city === 'Amsterdam' && selected.domain !== 'MLOps')
 			links.push({ label: 'AI House Amsterdam →', url: 'https://luma.com/AIHouseAmsterdam' })
 		if (isAi && city === 'San Francisco')
 			links.push({ label: 'GenAI SF →', url: 'https://luma.com/genai-sf' })
@@ -132,8 +139,6 @@
 			links.push({ label: 'Frontier Tower →', url: 'https://luma.com/frontiertower' })
 		if (selected.role === 'Founder' && city === 'Paris')
 			links.push({ label: 'Station F →', url: 'https://stationf.co' })
-		if (selected.role === 'SRE')
-			links.push({ label: 'SREday →', url: 'https://sreday.com/' })
 		return links
 	})
 
@@ -220,10 +225,10 @@
 <style>
 	.intro {
 		font-family: var(--font-mono);
-		font-size: var(--font-size-sm);
+		font-size: var(--font-size-md);
 		color: var(--text-secondary);
 		text-align: center;
-		max-width: 480px;
+		max-width: 520px;
 		line-height: 1.6;
 	}
 

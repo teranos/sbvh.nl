@@ -108,7 +108,7 @@
 
 	h1 {
 		font-family: Georgia, 'Times New Roman', serif;
-		font-size: 1.5rem;
+		font-size: 1.75rem;
 		font-weight: 400;
 		letter-spacing: 0.02em;
 		text-align: center;
