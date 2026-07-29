@@ -5,15 +5,17 @@
 
 	const isMobile = window.matchMedia('(max-width: 768px)').matches
 
-	function project(id: string, title: string, url: string, subtitle: string, description: string, showAttestation = false): Glyph & { url: string } {
+	interface ExtraLink { label: string; url: string }
+
+	function project(id: string, title: string, url: string, subtitle: string, description: string, showAttestation = false, extraLinks: ExtraLink[] = []): Glyph & { url: string } {
 		return {
 			id, title, url,
 			manifestationType: isMobile ? 'panel' : 'window',
 			initialWidth: '320px',
-			initialHeight: showAttestation ? '260px' : '140px',
+			initialHeight: showAttestation ? '260px' : extraLinks.length ? '170px' : '140px',
 			color: 'var(--glyph-fill)',
 			textColor: 'var(--text)',
-			renderContent: () => projectContent(subtitle, description, url, showAttestation),
+			renderContent: () => projectContent(subtitle, description, url, showAttestation, extraLinks),
 		}
 	}
 
@@ -26,10 +28,13 @@
 		project('glyphs', 'Glyphs', 'https://jsr.io/@qntx/glyphs', 'UI Primitive', 'An interface element with a permanent identity that smoothly changes form. This window is one.'),
 		project('cleanamsterdam', 'Clean Amsterdam', 'https://cleanamsterdam.nl', 'House Cleaning', 'Amsterdam house cleaning service.'),
 		project('laye', 'Laye', 'https://laye.sbvh.nl', 'Peer-to-Peer WASM', 'libp2p as a WASM module you drop into anything that needs to reach peers directly. Iroh-shaped, but embeddable wherever you already work.'),
-		project('game', 'Game', 'https://game.sbvh.nl', 'TODO subtitle', 'TODO description (built on Laye)'),
+		project('game', 'Game', 'https://game.sbvh.nl', 'Serverless Multiplayer', 'Rust and Bevy, rendering Cataclysm: Dark Days Ahead mapgen assets. Players connect peer-to-peer through Laye, so there is no server to run.', false, [
+			{ label: 'Source →', url: 'https://github.com/teranos/tsot/tree/master/game' },
+			{ label: 'Cataclysm: DDA →', url: 'https://cataclysmdda.org' },
+		]),
 	]
 
-	function projectContent(subtitle: string, description: string, url: string, showAttestation = false): HTMLElement {
+	function projectContent(subtitle: string, description: string, url: string, showAttestation = false, extraLinks: ExtraLink[] = []): HTMLElement {
 		const el = document.createElement('div')
 		el.className = 'glyph-content'
 
@@ -58,7 +63,22 @@
 			: url.includes('jsr.io') ? 'View on JSR →'
 			: 'Open →'
 		link.style.cssText = 'font-size: 11px; color: var(--accent); text-decoration: none;'
-		el.appendChild(link)
+
+		const row = document.createElement('div')
+		row.style.cssText = 'display: flex; flex-wrap: wrap; gap: 12px;'
+		row.appendChild(link)
+
+		for (const extra of extraLinks) {
+			const a = document.createElement('a')
+			a.href = extra.url
+			a.target = '_blank'
+			a.rel = 'noopener noreferrer'
+			a.textContent = extra.label
+			a.style.cssText = 'font-size: 11px; color: var(--accent); text-decoration: none;'
+			row.appendChild(a)
+		}
+
+		el.appendChild(row)
 
 		return el
 	}
