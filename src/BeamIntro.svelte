@@ -5,25 +5,43 @@
 
 	const slotKeys = ['role', 'domain', 'scope', 'verb', 'focus', 'craft', 'mission'] as const
 	type SlotKey = typeof slotKeys[number]
-	type Beam = Record<SlotKey, string> & { prob: number }
+	type Beam = Record<SlotKey, string> & { prob: number; bio?: true }
 
-	// Mass sits on infrastructure + resilience + operations: that is the first read.
-	// The AI and genomics paths stay reachable one click down every slot, not removed.
-	const beams: Beam[] = [
-		{ prob: 0.28, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
-		{ prob: 0.12, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'secure health data' },
-		{ prob: 0.10, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'visual programming languages', mission: 'genomic sovereignty' },
-		{ prob: 0.08, role: 'SRE', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
-		{ prob: 0.07, role: 'SRE', domain: 'infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'genomic sovereignty' },
-		{ prob: 0.06, role: 'Systems architect', domain: 'infrastructure', scope: 'and resilience', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
-		{ prob: 0.05, role: 'Systems engineer', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
-		{ prob: 0.05, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'automation', mission: 'secure health data' },
-		{ prob: 0.04, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'CI/CD', mission: 'secure health data' },
-		{ prob: 0.04, role: 'Systems architect', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'visual programming languages', mission: 'genomic sovereignty' },
-		{ prob: 0.04, role: 'SRE', domain: 'MLOps', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'genomic sovereignty' },
-		{ prob: 0.04, role: 'Founder', domain: 'genomic computing', scope: 'and open platforms', verb: 'Now working on', focus: 'data-sovereign bio-infrastructure', craft: 'secure health data', mission: 'genomic emancipation' },
-		{ prob: 0.03, role: 'Full stack', domain: 'DevSecOps', scope: 'and data privacy', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
+	// Public tree — every visitor sees this. No genomics or health vocabulary anywhere
+	// in it, so it cannot surface in a popup either.
+	const publicBeams: Beam[] = [
+		{ prob: 0.20, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data sovereignty' },
+		{ prob: 0.14, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'resilient infrastructure' },
+		{ prob: 0.10, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'resilient infrastructure' },
+		{ prob: 0.10, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'visual programming languages', mission: 'data sovereignty' },
+		{ prob: 0.10, role: 'SRE', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'resilient infrastructure' },
+		{ prob: 0.08, role: 'SRE', domain: 'infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'data sovereignty' },
+		{ prob: 0.07, role: 'Systems architect', domain: 'infrastructure', scope: 'and resilience', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'resilient infrastructure' },
+		{ prob: 0.06, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'automation', mission: 'data sovereignty' },
+		{ prob: 0.05, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'CI/CD', mission: 'resilient infrastructure' },
+		{ prob: 0.05, role: 'Systems engineer', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'automation', mission: 'data sovereignty' },
+		{ prob: 0.05, role: 'Full stack', domain: 'DevSecOps', scope: 'and data privacy', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'data sovereignty' },
 	]
+
+	// Gated tree — only revealed to visitors arriving from Luma or GitHub.
+	const bioBeams: Beam[] = [
+		{ bio: true, prob: 0.08, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
+		{ bio: true, prob: 0.12, role: 'Systems engineer', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'secure health data' },
+		{ bio: true, prob: 0.10, role: 'Systems engineer', domain: 'infrastructure', scope: 'at scale', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'visual programming languages', mission: 'genomic sovereignty' },
+		{ bio: true, prob: 0.08, role: 'SRE', domain: 'infrastructure', scope: 'and resilience', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
+		{ bio: true, prob: 0.07, role: 'SRE', domain: 'infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'CI/CD', mission: 'genomic sovereignty' },
+		{ bio: true, prob: 0.06, role: 'Systems architect', domain: 'infrastructure', scope: 'and resilience', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
+		{ bio: true, prob: 0.05, role: 'Systems engineer', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'automation', mission: 'data-sovereign bio-infrastructure' },
+		{ bio: true, prob: 0.05, role: 'DevOps', domain: 'infrastructure', scope: 'as code', verb: 'Building tools for', focus: 'local AI', craft: 'automation', mission: 'secure health data' },
+		{ bio: true, prob: 0.04, role: 'Systems architect', domain: 'ML infrastructure', scope: 'at scale', verb: 'Building tools for', focus: 'AI interpretability', craft: 'visual programming languages', mission: 'genomic sovereignty' },
+		{ bio: true, prob: 0.04, role: 'SRE', domain: 'MLOps', scope: 'at scale', verb: 'Building tools for', focus: 'local inference', craft: 'automation', mission: 'genomic sovereignty' },
+		{ bio: true, prob: 0.04, role: 'Founder', domain: 'genomic computing', scope: 'and open platforms', verb: 'Now working on', focus: 'data-sovereign bio-infrastructure', craft: 'secure health data', mission: 'genomic emancipation' },
+		{ bio: true, prob: 0.03, role: 'Full stack', domain: 'DevSecOps', scope: 'and data privacy', verb: 'Now working on', focus: 'AI that runs on your own machine', craft: 'cloud architecture', mission: 'personal genomics' },
+	]
+
+	const referrer = document.referrer
+	const showBio = referrer.includes('luma.com') || referrer.includes('lu.ma') || referrer.includes('github.com')
+	const beams: Beam[] = showBio ? [...publicBeams, ...bioBeams] : publicBeams
 
 	// Sentence template — segments reference slot keys or static text
 	const template: ({ slot: SlotKey } | { text: string })[] = [
@@ -51,9 +69,11 @@
 			const match = beams.find(b => b.role.toLowerCase() === roleParam.toLowerCase())
 			if (match) return match
 		}
-		const ref = document.referrer
-		if (ref.includes('genomicos')) return beams.find(b => b.role === 'Founder')!
-		if (ref.includes('github.com')) return beams.find(b => b.role === 'Systems engineer')!
+		// Founder only exists in the gated tree, so both lookups must tolerate a miss.
+		const founder = beams.find(b => b.role === 'Founder')
+		if (referrer.includes('genomicos') && founder) return founder
+		const engineer = beams.find(b => b.role === 'Systems engineer')
+		if (referrer.includes('github.com') && engineer) return engineer
 		return beams[0]
 	}
 
