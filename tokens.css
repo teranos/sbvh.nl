@@ -20,6 +20,9 @@
   --border: #dcdedd;
   --accent: #3d7a4d;
   --accent-hover: #2d6a3d;
+  /* Glyph fill — dot, window and panel surface.
+     Light: same as --bg-secondary. Dark: #252625 lifted 10% toward white. */
+  --glyph-fill: #f7f9f8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,6 +35,7 @@
     --border: #3f4140;
     --accent: #6a9a76;
     --accent-hover: #82b08c;
+    --glyph-fill: #3b3c3b;
   }
 }
 
@@ -46,6 +50,7 @@
     --border: #3f4140;
     --accent: #6a9a76;
     --accent-hover: #82b08c;
+    --glyph-fill: #3b3c3b;
   }
 }
 
@@ -59,5 +64,6 @@
     --border: #dcdedd;
     --accent: #3d7a4d;
     --accent-hover: #2d6a3d;
+    --glyph-fill: #f7f9f8;
   }
 }

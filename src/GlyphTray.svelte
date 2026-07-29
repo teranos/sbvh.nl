@@ -11,7 +11,7 @@
 			manifestationType: isMobile ? 'panel' : 'window',
 			initialWidth: '320px',
 			initialHeight: showAttestation ? '260px' : '140px',
-			color: 'var(--bg-secondary)',
+			color: 'var(--glyph-fill)',
 			textColor: 'var(--text)',
 			renderContent: () => projectContent(subtitle, description, url, showAttestation),
 		}
@@ -25,7 +25,7 @@
 		project('werf', 'Werf', 'https://github.com/teranos/QNTX', 'Job Matching', 'Your CV is the interface. Upload it, see where you could go next, and get matched to roles that fit your trajectory.'),
 		project('glyphs', 'Glyphs', 'https://jsr.io/@qntx/glyphs', 'UI Primitive', 'An interface element with a permanent identity that smoothly changes form. This window is one.'),
 		project('cleanamsterdam', 'Clean Amsterdam', 'https://cleanamsterdam.nl', 'House Cleaning', 'Amsterdam house cleaning service.'),
-		project('laye', 'Laye', 'https://laye.sbvh.nl', 'TODO subtitle', 'TODO description'),
+		project('laye', 'Laye', 'https://laye.sbvh.nl', 'Peer-to-Peer WASM', 'libp2p as a WASM module you drop into anything that needs to reach peers directly. Iroh-shaped, but embeddable wherever you already work.'),
 		project('game', 'Game', 'https://game.sbvh.nl', 'TODO subtitle', 'TODO description (built on Laye)'),
 	]
 
@@ -54,7 +54,9 @@
 		link.href = url
 		link.target = '_blank'
 		link.rel = 'noopener noreferrer'
-		link.textContent = 'View on GitHub →'
+		link.textContent = url.includes('github.com') ? 'View on GitHub →'
+			: url.includes('jsr.io') ? 'View on JSR →'
+			: 'Open →'
 		link.style.cssText = 'font-size: 11px; color: var(--accent); text-decoration: none;'
 		el.appendChild(link)
 
@@ -140,7 +142,7 @@
 		align-items: center;
 		gap: 8px;
 		padding: 0 8px;
-		background-color: var(--bg-secondary);
+		background-color: var(--glyph-fill);
 		border-bottom: 1px solid var(--border);
 		border-radius: 4px 4px 0 0;
 		height: 32px;
