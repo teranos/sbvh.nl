@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { glyphRun } from '@qntx/glyphs'
+	import { glyphRun, configureGlyphs } from '@qntx/glyphs'
 	import type { Glyph } from '@qntx/glyphs'
 
 	const isMobile = window.matchMedia('(max-width: 768px)').matches
@@ -84,6 +84,9 @@
 	}
 
 	onMount(() => {
+		// Resting dot doubled from the 10px default. Expanded size is unchanged,
+		// so the dot travels less distance to reach it.
+		configureGlyphs({ dotGeometry: { minWidth: 20, minHeight: 20 } })
 		glyphRun.init()
 
 		for (const project of projects) {
