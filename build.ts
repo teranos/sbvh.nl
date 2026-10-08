@@ -75,6 +75,7 @@ const sitemapPages: Array<{ loc: string; sources: string[] }> = [
   { loc: '/',                  sources: ['index.html', 'src', 'tokens.css'] },
   { loc: '/calendly/',         sources: ['static/calendly/index.html'] },
   { loc: '/privacy.html',      sources: ['static/privacy.html'] },
+  { loc: '/qntx-tos.html',     sources: ['static/qntx-tos.html'] },
   { loc: '/werf/privacy.html', sources: ['static/werf/privacy.html'] },
 ]
 
