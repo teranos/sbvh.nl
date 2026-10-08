@@ -5,7 +5,7 @@
     "": {
       "name": "sbvh.nl",
       "dependencies": {
-        "@qntx/glyphs": "npm:@jsr/qntx__glyphs@0.8.2",
+        "@teranos/elements": "npm:@jsr/teranos__elements@1.12.0",
         "svelte": "5.55.0",
       },
     },
@@ -21,9 +21,9 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@qntx/glyphs": ["@jsr/qntx__glyphs@0.8.2", "https://npm.jsr.io/~/11/@jsr/qntx__glyphs/0.8.2.tgz", {}, "sha512-oQEWIjBueTbeWg4JSiYU3j/vt7y4lvgAu728BpSgfEIw8ZNlSWWr8WQRrWs9P7dmbuyjNm7zaeESXIMMIhA2HA=="],
-
     "@sveltejs/acorn-typescript": ["@sveltejs/acorn-typescript@1.0.9", "", { "peerDependencies": { "acorn": "^8.9.0" } }, "sha512-lVJX6qEgs/4DOcRTpo56tmKzVPtoWAaVbL4hfO7t7NVwl9AAXzQR6cihesW1BmNMPl+bK6dreu2sOKBP2Q9CIA=="],
+
+    "@teranos/elements": ["@jsr/teranos__elements@1.12.0", "https://npm.jsr.io/~/11/@jsr/teranos__elements/1.12.0.tgz", {}, "sha512-f2EJ186Rkwdmsciud4RqdzgKTIbGGVuMsjuUS7Vn1Vxwz3tNNE38vk85/t1r/fmvS7SE09QoFQRgBbIKpKYFpg=="],
 
     "@types/estree": ["@types/estree@1.0.8", "", {}, "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="],
 

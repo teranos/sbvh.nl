@@ -20,9 +20,12 @@
   --border: #dcdedd;
   --accent: #3d7a4d;
   --accent-hover: #2d6a3d;
-  /* Glyph fill — dot, window and panel surface.
-     Light: same as --bg-secondary. Dark: #252625 lifted 10% toward white. */
+  /* Dot fill only — lifted in dark so a 20px dot reads against the page. */
   --glyph-fill: #f7f9f8;
+  /* Window and panel body. Sits just above --bg, not near --border. */
+  --glyph-surface: #f7f9f8;
+  /* Title bar — one step off the body so the chrome separates from content. */
+  --glyph-titlebar: #eceeed;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +39,8 @@
     --accent: #6a9a76;
     --accent-hover: #82b08c;
     --glyph-fill: #3b3c3b;
+    --glyph-surface: #202120;
+    --glyph-titlebar: #2b2c2b;
   }
 }
 
@@ -51,6 +56,8 @@
     --accent: #6a9a76;
     --accent-hover: #82b08c;
     --glyph-fill: #3b3c3b;
+    --glyph-surface: #202120;
+    --glyph-titlebar: #2b2c2b;
   }
 }
 
@@ -65,5 +72,7 @@
     --accent: #3d7a4d;
     --accent-hover: #2d6a3d;
     --glyph-fill: #f7f9f8;
+    --glyph-surface: #f7f9f8;
+    --glyph-titlebar: #eceeed;
   }
 }
