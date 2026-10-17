@@ -1,6 +1,11 @@
 <script lang="ts">
 	import GlyphTray from './GlyphTray.svelte'
 	import BeamIntro from './BeamIntro.svelte'
+	import Booking from './Booking.svelte'
+	import type { Deps } from './door'
+
+	let { door }: { door: Deps } = $props()
+	let booking = $state(false)
 
 	let inverted = $state(false)
 
@@ -36,9 +41,9 @@
 	</div>
 
 	<nav class="social">
-		<a href="/calendly" aria-label="Schedule a time" title="Schedule a time">
+		<button class="schedule" onclick={() => (booking = true)} aria-label="Schedule a time" title="Schedule a time">
 			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-		</a>
+		</button>
 		<a href="https://x.com/01F1R3" target="_blank" rel="noopener noreferrer" aria-label="X">
 			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
 		</a>
@@ -58,6 +63,8 @@
 </main>
 
 <GlyphTray />
+
+<Booking d={door} bind:open={booking} />
 
 <style>
 	main {
@@ -170,8 +177,18 @@
 		transition: color 0.2s ease;
 	}
 
-	.social a:hover {
+	.social a:hover, .schedule:hover {
 		color: var(--text);
+	}
+
+	.schedule {
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		color: var(--text-tertiary);
+		transition: color 0.2s ease;
+		line-height: 0;
 	}
 
 	@media (max-width: 480px) {

@@ -1,0 +1,40 @@
+[workspace]
+
+[package]
+name = "sbvhAPI"
+version = "0.1.1"
+edition = "2021"
+description = "QNTX plugin — booking a call with SBVH"
+license = "AGPL-3.0-or-later"
+authors = ["QNTX Contributors"]
+
+# Bare name is the third candidate in pluginBinaryNames() — the loader finds it
+# without a qntx- prefix, and it matches the plugin name the repo URL derives.
+[[bin]]
+name = "sbvhAPI"
+path = "src/main.rs"
+
+[dependencies]
+# The same checkout cleanAPI builds against, so both speak the protocol the
+# node at q.sbvh.nl runs. qntx-grpc takes qntx-proto as a path dependency, so
+# both must come from one checkout.
+qntx-grpc = { git = "https://github.com/teranos/QNTX.git", rev = "70dd8b10e81c5b0184457a947743aad3775d5727", features = ["plugin"] }
+qntx-proto = { git = "https://github.com/teranos/QNTX.git", rev = "70dd8b10e81c5b0184457a947743aad3775d5727" }
+
+tonic = "0.12"
+prost = "0.13"
+prost-types = "0.13"
+tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+sentry = { version = "=0.49.2", default-features = false, features = ["backtrace", "contexts", "panic", "reqwest", "rustls", "tracing", "logs"] }
+
+clap = { version = "4", features = ["derive"] }
+
+# Minting a meet id
+uuid = { version = "1", features = ["v4"] }
