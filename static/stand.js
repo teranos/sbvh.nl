@@ -1,5 +1,9 @@
 // Loaded as a classic (non-module) script in <head> so window.stand
 // exists before main.js runs.
+
+// The id that once outlived the visit, taken off every browser still holding it.
+try { localStorage.removeItem("stand_id"); } catch (refused) { /* nothing held */ }
+
 window.stand = (event, params = {}) => {
   // Empty means absent: an id nobody has is a key the node never stores,
   // rather than a blank one every storage-refusing browser shares.
@@ -14,10 +18,9 @@ window.stand = (event, params = {}) => {
   u.searchParams.set("e", event);
   u.searchParams.set("page", location.pathname);
 
-  // The person, and the sitting. Without the second one a visitor who
-  // comes back next week is one visit that lasted a week.
-  const who = hold("localStorage", "stand_id");
-  if (who) u.searchParams.set("v", who);
+  // The sitting, and nothing longer. One id per tab, gone when it closes:
+  // nothing outlives the visit, so nothing here asks for consent. A visitor
+  // who comes back next week is a new visit, which is what we chose.
   const sitting = hold("sessionStorage", "stand_visit");
   if (sitting) u.searchParams.set("visit", sitting);
 
