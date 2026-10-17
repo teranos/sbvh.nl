@@ -11,14 +11,52 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Sebastiaan Brandon van Houten",
-    "url": "https://sbvh.nl",
-    "sameAs": [
-      "https://www.linkedin.com/in/sbvh/",
-      "https://x.com/01F1R3",
-      "https://github.com/teranos",
-      "https://t.me/sb_vh"
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://sbvh.nl/#person",
+        "name": "Sebastiaan Brandon van Houten",
+        "url": "https://sbvh.nl",
+        "jobTitle": "SRE and DevSecOps consultant",
+        "worksFor": { "@id": "https://sbvh.nl/#business" },
+        "knowsAbout": [
+          "Site reliability engineering",
+          "DevSecOps",
+          "Secure software development lifecycle",
+          "PSD2",
+          "Open banking",
+          "DORA",
+          "NIS2",
+          "EU AI Act",
+          "MODBUS",
+          "Industrial control systems",
+          "Network protocol reverse engineering",
+          "AI agent governance",
+          "Nix"
+        ],
+        "sameAs": [
+          "https://www.linkedin.com/in/sbvh/",
+          "https://x.com/01F1R3",
+          "https://github.com/teranos",
+          "https://t.me/sb_vh"
+        ]
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://sbvh.nl/#business",
+        "name": "SBVH",
+        "url": "https://sbvh.nl",
+        "founder": { "@id": "https://sbvh.nl/#person" },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Kapteynstraat 10 H",
+          "postalCode": "1097 KM",
+          "addressLocality": "Amsterdam",
+          "addressCountry": "NL"
+        },
+        "areaServed": "EU",
+        "identifier": { "@type": "PropertyValue", "propertyID": "KvK", "value": "86374931" }
+      }
     ]
   }
   </script>
