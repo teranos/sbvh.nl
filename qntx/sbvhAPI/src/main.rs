@@ -23,7 +23,8 @@ mod telemetry;
 use service::SbvhPluginService;
 
 #[derive(Parser, Debug)]
-#[command(name = "sbvhAPI")]
+// The node reads `--version` as qntx-<name>-plugin <version> after building it.
+#[command(name = "qntx-sbvhAPI-plugin")]
 #[command(about = "QNTX plugin — booking a call with SBVH")]
 #[command(version)]
 struct Args {

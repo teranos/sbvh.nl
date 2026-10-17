@@ -2,7 +2,7 @@
 
 [package]
 name = "sbvhAPI"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "QNTX plugin — booking a call with SBVH"
 license = "AGPL-3.0-or-later"
